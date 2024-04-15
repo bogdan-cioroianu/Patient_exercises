@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Apr 13 01:48:48 2024
-
-@author: Diana
-"""
-
 import cv2
 import mediapipe as mp
 import numpy as np
