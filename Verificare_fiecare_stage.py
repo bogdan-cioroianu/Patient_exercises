@@ -79,6 +79,10 @@ def check_angles(angles, target_angles, tolerance=10):
     return result
 
 # Frame data target pentru fiecare stage
+
+####### Bogdan #####
+# Ar vfi bine sa pui template-urile in fisiere externe pe care sa le poti pune ca input. Astfel poti aplica codul pe mai multe fisiere fara sa il modifici.
+################
 frame_data_target_template = [
     {"angles": {"2": [25], "8": [160], "9": [160], "14": [175], "15": [175]}},
     {"angles": {"2": [25], "8": [155], "9": [155], "14": [150], "15": [175]}},
@@ -117,6 +121,10 @@ while cap.isOpened():
             landmarks = results_pose.pose_landmarks.landmark
 
             # Calculare unghiuri partea dreapta
+             ####### Bogdan #####
+            # Tiput asta de stocare a unghiurilor nu este foarte eficient
+            # Iti recomand sa faci un array si pe pozitia X din arraty stochezi valoarea unghiului X, conform modelului pe care l-am discutat. Poti modificat functia calculeaza_unghiuri astfel incat sa iti returneze acest array. In functie trebuie sa faci o assignare statitica pe fiecare pozitie.
+            ################
             angle_elbow_right, angle_shoulder_right, angle_shoulder_right_int, angle_shoulder_left, angle_armpit_right, angle_shoulder_int_right, angle_shoulder_int_left, angle_hip_right, angle_knee_right, angle_ankle_right, angle_hip_int_right, angle_hip_sub_right, angle_hip_sub_left = calculeaza_unghiuri(landmarks, "RIGHT")
 
             # Calculare unghiuri partea stângă
@@ -124,6 +132,11 @@ while cap.isOpened():
             
             # Afisare unghiuri pe imagine
             for i, landmark in enumerate(landmarks):
+
+            ####### Bogdan #####
+            # 100 de elseif -uri, nu e deloc elegant :). Te rog sa te gandesti cum ai putea sa scapi de ele. 
+            # Hint: poti sa folosesti array-ul de unghiuri de care am vb mai sus si un o alta mapare statica intre pozitia unghiului in array si valoare din mp_pose.PoseLandmark.nnnnn 
+            ################
                 #partea stanga
                 if i == mp_pose.PoseLandmark.LEFT_ELBOW.value:
                     cv2.putText(frame, f"{int(angle_elbow_left)}", (int(landmark.x * frame.shape[1]), int(landmark.y * frame.shape[0]) + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
@@ -164,6 +177,12 @@ while cap.isOpened():
             
             # Verificare dacă stage-ul curent este mai mic decât lungimea șablonului de date țintă al cadrelor
             if current_stage < len(frame_data_target_template):
+
+            ####### Bogdan #####
+            # Aici e o mapare statica care iti blocheaza codul doar pe acest template. Trebui sa te gandesti cum ai putea face un code generic care sa iti poate extrage unghiurile pe care trebuie sa le compari din template. Tu ai index-ul fiecarui unghi care trebui comparat asa ca poti parcurge   
+            # template-ul si compara fiecare unghit targe cu valoarea lui din acel moment. Asta in loc sa hardcodezi care unghiuri sunt in scop.
+            ################
+                
               # Extragere unghiuri din partea dreapta/stanga și unghiurile țintă corespunzătoare din template de date țintă al cadrelor pentru stage-ul curent
               right_angles = [angle_armpit_right, angle_hip_right, angle_knee_right]
               right_target_angles = frame_data_target_template[current_stage]["angles"]["2"], frame_data_target_template[current_stage]["angles"]["8"], frame_data_target_template[current_stage]["angles"]["14"]
